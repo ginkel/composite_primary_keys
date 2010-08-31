@@ -132,6 +132,21 @@ module ActiveRecord
         id
       end
 
+      def update_attribute(name, value)
+        raise ActiveRecordError, "#{name.to_s} is marked as readonly" if self.class.readonly_attributes.include? name.to_s
+
+        changes = record_update_timestamps || {}
+
+        if name
+          name = name.to_s
+          send("#{name}=", value)
+          changes[name] = read_attribute(name)
+        end
+
+        @changed_attributes.except!(*changes.keys)
+        self.class.update_all(changes, ids_hash) == 1
+      end
+
       # Cloned objects have no id assigned and are treated as new records. Note that this is a "shallow" clone
       # as it copies the object's attributes only, not its associations. The extent of a "deep" clone is
       # application specific and is therefore left to the application to implement according to its need.
