@@ -3,11 +3,11 @@ module ActiveRecord
     class AssociationReflection
       def cpk_primary_key
         # Make sure the returned key(s) are an array
-        @cpk_primary_key ||= [derive_primary_key_name].flatten
+        @cpk_primary_key ||= [ derive_primary_key_name ].flatten
       end
 
       def derive_primary_key_name_with_cpk
-        result = derive_primary_key_name_without_cpk
+        result = belongs_to? ? class_name.foreign_key : derive_primary_key_name_without_cpk
 
         # CPK
         if result.is_a?(Array)

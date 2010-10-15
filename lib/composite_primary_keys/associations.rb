@@ -12,21 +12,19 @@ module ActiveRecord
         end.join(' AND ')
       end
   
-      def set_belongs_to_association_for(record)
-        if @reflection.options[:as]
-          record["#{@reflection.options[:as]}_id"]   = @owner.id unless @owner.new_record?
-          record["#{@reflection.options[:as]}_type"] = @owner.class.base_class.name.to_s
+      def set_belongs_to_association_for_with_cpk(record)
+        if not @reflection.options[:as] and not @owner.new_record? and @owner.class.primary_key.kind_of?(Array) then
+          primary_key = @reflection.options[:primary_key] || :id
+          # CPK
+          # record[@reflection.primary_key_name] = @owner.send(primary_key)
+          values = [@owner.send(primary_key)].flatten
+          key_values = @reflection.cpk_primary_key.zip(values)
+          key_values.each {|key, value| record[key] = value}
         else
-          unless @owner.new_record?
-            primary_key = @reflection.options[:primary_key] || :id
-            # CPK
-            # record[@reflection.primary_key_name] = @owner.send(primary_key)
-            values = [@owner.send(primary_key)].flatten
-            key_values = @reflection.cpk_primary_key.zip(values)
-            key_values.each {|key, value| record[key] = value}
-          end
+          set_belongs_to_association_for_without_cpk record
         end
       end
+      alias_method_chain :set_belongs_to_association_for, :cpk
     end
 
     class HasAndBelongsToManyAssociation
