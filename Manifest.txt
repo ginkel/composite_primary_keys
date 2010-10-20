@@ -34,15 +34,6 @@ local/tasks.rb.sample
 scripts/console.rb
 scripts/txt2html
 scripts/txt2js
-tasks/activerecord_selection.rake
-tasks/databases.rake
-tasks/databases/mysql.rake
-tasks/databases/oracle.rake
-tasks/databases/postgresql.rake
-tasks/databases/sqlite3.rake
-tasks/deployment.rake
-tasks/local_setup.rake
-tasks/website.rake
 test/README_tests.txt
 test/abstract_unit.rb
 test/connections/native_ibm_db/connection.rb
